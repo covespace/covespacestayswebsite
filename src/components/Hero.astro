@@ -1,0 +1,124 @@
+---
+---
+
+<section class="hero">
+  <div class="hero-image" aria-label="Casa Blanca exterior (placeholder)"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <p class="eyebrow">Coronado Historic District · Phoenix</p>
+      <h1>Casa Blanca</h1>
+      <p class="tagline">
+        A 2-bedroom historic casita in one of Phoenix's most walkable
+        neighborhoods. Book direct — skip the service fees.
+      </p>
+      <div class="hero-ctas">
+        <a href="#availability" class="button">Check Availability</a>
+        <a href="#inquire" class="button button-secondary">Inquire</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      #d4b896 0%,
+      #c9a876 35%,
+      #b56544 100%
+    );
+  }
+
+  .hero-image::after {
+    content: 'Hero photo placeholder';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.1) 40%,
+      rgba(0, 0, 0, 0) 70%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    width: 100%;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 var(--space-md) var(--space-xl);
+    z-index: 1;
+  }
+
+  .hero-text {
+    max-width: 620px;
+  }
+
+  .hero-text .eyebrow {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .hero-text h1 {
+    color: white;
+    margin-bottom: var(--space-md);
+  }
+
+  .tagline {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: var(--space-md);
+    max-width: 540px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .hero-ctas .button-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-ctas .button-secondary:hover {
+    background: white;
+    color: var(--color-text);
+    border-color: white;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      min-height: 85vh;
+    }
+    .hero-content {
+      padding-bottom: var(--space-lg);
+    }
+  }
+</style>

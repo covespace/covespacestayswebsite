@@ -1,0 +1,74 @@
+---
+const reasons = [
+  {
+    title: 'No service fees',
+    body: 'Airbnb adds 14–16% in guest service fees. Book direct and keep that in your pocket — or put it toward a longer stay.',
+  },
+  {
+    title: 'Talk to the host',
+    body: 'Your inquiry comes straight to us. No platform messaging, no back-and-forth through a third party. Just direct answers.',
+  },
+  {
+    title: 'Same house, same calendar',
+    body: 'Real-time availability synced from our live booking calendar. What you see is what\'s open.',
+  },
+];
+---
+
+<section class="why-direct">
+  <div class="container-narrow">
+    <div class="section-header">
+      <p class="eyebrow">Why Book Direct</p>
+      <h2>Skip the fees. Talk to the host.</h2>
+    </div>
+
+    <div class="reasons-grid">
+      {reasons.map((r) => (
+        <div class="reason">
+          <h3>{r.title}</h3>
+          <p>{r.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .why-direct {
+    background: var(--color-bg);
+  }
+
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  @media (max-width: 820px) {
+    .reasons-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+  }
+
+  .reason {
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+  }
+
+  .reason h3 {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+  }
+
+  .reason p {
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,244 @@
+---
+---
+
+<section id="inquire" class="inquire">
+  <div class="container-narrow">
+    <div class="section-header">
+      <p class="eyebrow">Book Direct</p>
+      <h2>Request your dates</h2>
+      <p class="section-intro">
+        Send an inquiry with your dates and we'll confirm availability and
+        pricing by email — usually within a few hours.
+      </p>
+    </div>
+
+    <form
+      name="inquiry"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      class="form"
+      id="inquiry-form"
+    >
+      <input type="hidden" name="form-name" value="inquiry" />
+      <p class="hp-field" hidden>
+        <label>Don't fill this out: <input name="bot-field" /></label>
+      </p>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" />
+        </div>
+        <div class="field">
+          <label for="guests">Guests</label>
+          <select id="guests" name="guests" required>
+            <option value="1">1 guest</option>
+            <option value="2" selected>2 guests</option>
+            <option value="3">3 guests</option>
+            <option value="4">4 guests</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="checkin">Check-in</label>
+          <input type="text" id="checkin" name="checkin" placeholder="Select date" required />
+        </div>
+        <div class="field">
+          <label for="checkout">Check-out</label>
+          <input type="text" id="checkout" name="checkout" placeholder="Select date" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="message">Anything we should know? (optional)</label>
+        <textarea id="message" name="message" rows="4" placeholder="Traveling with a dog, celebrating an anniversary, etc."></textarea>
+      </div>
+
+      <button type="submit" class="button form-submit">Send Inquiry</button>
+
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById('inquiry-form');
+    const status = document.getElementById('form-status');
+    if (!form || !status) return;
+
+    function setupDatePickers(booked) {
+      if (typeof flatpickr === 'undefined') {
+        setTimeout(() => setupDatePickers(booked), 200);
+        return;
+      }
+
+      const checkin = flatpickr('#checkin', {
+        minDate: 'today',
+        disable: booked || [],
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'M j, Y',
+        onChange: function (selected) {
+          if (selected[0]) {
+            const next = new Date(selected[0]);
+            next.setDate(next.getDate() + 1);
+            checkout.set('minDate', next);
+          }
+        },
+      });
+
+      const checkout = flatpickr('#checkout', {
+        minDate: 'today',
+        disable: booked || [],
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'M j, Y',
+      });
+    }
+
+    if (window.__bookedDates) {
+      setupDatePickers(window.__bookedDates);
+    } else {
+      window.addEventListener('availability-loaded', function (e) {
+        setupDatePickers(e.detail.booked);
+      });
+      setTimeout(() => {
+        if (!window.__bookedDates) setupDatePickers([]);
+      }, 3000);
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status.textContent = 'Sending...';
+      status.className = 'form-status sending';
+
+      const formData = new FormData(form);
+      const encoded = new URLSearchParams(formData).toString();
+
+      try {
+        const res = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encoded,
+        });
+        if (!res.ok) throw new Error('Submission failed');
+
+        status.textContent =
+          "Thanks — your inquiry is in. We'll be in touch by email shortly.";
+        status.className = 'form-status success';
+        form.reset();
+      } catch (err) {
+        status.textContent =
+          "Something went wrong. Please email us directly at matt@covespacebuild.com.";
+        status.className = 'form-status error';
+      }
+    });
+  })();
+</script>
+
+<style>
+  .inquire {
+    background: var(--color-bg);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  @media (max-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field label {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(181, 101, 68, 0.15);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .form-submit {
+    margin-top: var(--space-sm);
+    align-self: flex-start;
+  }
+
+  .form-status {
+    font-size: 0.95rem;
+    margin-top: var(--space-sm);
+    min-height: 1.4em;
+  }
+
+  .form-status.sending {
+    color: var(--color-text-muted);
+  }
+
+  .form-status.success {
+    color: #2d6a3f;
+  }
+
+  .form-status.error {
+    color: #b54444;
+  }
+</style>

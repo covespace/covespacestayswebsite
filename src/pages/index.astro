@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Space from '../components/Space.astro';
+import Gallery from '../components/Gallery.astro';
+import Neighborhood from '../components/Neighborhood.astro';
+import Availability from '../components/Availability.astro';
+import WhyBookDirect from '../components/WhyBookDirect.astro';
+import InquiryForm from '../components/InquiryForm.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Casa Blanca — Cove Space Stays | Historic Phoenix Rental"
+  description="Casa Blanca is a 2-bedroom historic home in Phoenix's Coronado Historic District. Walkable to coffee, dinner, and a neighborhood market. Book direct and skip the fees."
+>
+  <Nav />
+  <main>
+    <Hero />
+    <Space />
+    <Gallery />
+    <Neighborhood />
+    <Availability />
+    <WhyBookDirect />
+    <InquiryForm />
+  </main>
+  <Footer />
+</Layout>

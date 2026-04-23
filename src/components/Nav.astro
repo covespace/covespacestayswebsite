@@ -1,0 +1,83 @@
+---
+---
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-brand">Cove Space Stays</a>
+    <div class="nav-links">
+      <a href="#space">The Space</a>
+      <a href="#neighborhood">Neighborhood</a>
+      <a href="#availability">Availability</a>
+      <a href="#inquire" class="button">Book Direct</a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(250, 248, 245, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232, 227, 220, 0.6);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .nav-brand {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  .nav-brand:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .nav-links a:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-links .button {
+    color: white;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .nav-links .button:hover {
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links a:not(.button) {
+      display: none;
+    }
+    .nav-links .button {
+      padding: 0.55rem 1rem;
+    }
+  }
+</style>

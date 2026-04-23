@@ -1,0 +1,129 @@
+---
+const features = [
+  { label: 'Bedrooms', value: '2' },
+  { label: 'Bathroom', value: '1' },
+  { label: 'Sleeps', value: '4' },
+  { label: 'Single-level', value: 'No stairs' },
+  { label: 'Pets', value: 'Dogs welcome' },
+  { label: 'Parking', value: 'Street, out front' },
+];
+---
+
+<section id="space" class="space">
+  <div class="container">
+    <div class="space-grid">
+      <div class="space-copy">
+        <p class="eyebrow">The Space</p>
+        <h2>A historic home, reimagined for modern stays.</h2>
+        <p>
+          Casa Blanca is a 2-bedroom, 1-bath historic home in Phoenix's Coronado
+          neighborhood — one of the city's most walkable districts. A coffee
+          shop, a scratch-kitchen restaurant, and a neighborhood market are all
+          a short walk away.
+        </p>
+        <p>
+          The house is yours entirely, with a fenced yard and a shaded back
+          patio. Inside, the king bedroom has a plush foam mattress and the
+          second bedroom has a queen with a walk-in closet. The full kitchen
+          is equipped for cooking. Washer and dryer are in-unit.
+        </p>
+        <p>
+          Self check-in with a smart lock. Single-level home, no stairs. Dogs
+          welcome.
+        </p>
+      </div>
+      <div class="space-visual">
+        <div class="space-image" aria-label="Interior photo (placeholder)">
+          <span>Interior photo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      {features.map((f) => (
+        <div class="feature">
+          <div class="feature-label">{f.label}</div>
+          <div class="feature-value">{f.value}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .space {
+    background: var(--color-bg);
+  }
+
+  .space-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (max-width: 900px) {
+    .space-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .space-copy p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .space-image {
+    aspect-ratio: 4 / 5;
+    background: linear-gradient(135deg, #e8d9c4 0%, #d4b896 100%);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.35);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--space-md);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 900px) {
+    .features {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .features {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .feature {
+    text-align: left;
+  }
+
+  .feature-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .feature-value {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+</style>

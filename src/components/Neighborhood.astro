@@ -1,0 +1,130 @@
+---
+const walkable = [
+  { name: 'Dark Hall Coffee', walk: '3 min' },
+  { name: 'Coronado Phx (scratch kitchen)', walk: '3 min' },
+  { name: 'Sunshine Market', walk: '3 min' },
+  { name: 'Oak Street Murals', walk: '8 min' },
+  { name: 'Coronado Park', walk: '8 min' },
+];
+
+const driving = [
+  { name: 'Downtown Phoenix', dist: '2 mi' },
+  { name: 'Phoenix Convention Center', dist: '2 mi' },
+  { name: 'ASU Downtown Campus', dist: '2 mi' },
+  { name: 'Chase Field', dist: '2.5 mi' },
+  { name: 'Footprint Center', dist: '2.5 mi' },
+  { name: 'Sky Harbor Airport', dist: '4 mi' },
+  { name: 'Papago Park', dist: '4 mi' },
+  { name: 'Camelback Mountain', dist: '8 mi' },
+  { name: 'Old Town Scottsdale', dist: '9 mi' },
+];
+---
+
+<section id="neighborhood" class="neighborhood">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">The Neighborhood</p>
+      <h2>Coronado Historic District</h2>
+      <p class="section-intro">
+        Two miles from downtown Phoenix, Coronado is a 1920s-era neighborhood
+        of bungalows, murals, and locally owned businesses. Walk to coffee in
+        the morning and dinner at night without moving your car.
+      </p>
+    </div>
+
+    <div class="neighborhood-grid">
+      <div class="col">
+        <h3>Walking distance</h3>
+        <ul class="place-list">
+          {walkable.map((p) => (
+            <li>
+              <span class="place-name">{p.name}</span>
+              <span class="place-dist">{p.walk} walk</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="col">
+        <h3>Short drive</h3>
+        <ul class="place-list">
+          {driving.map((p) => (
+            <li>
+              <span class="place-name">{p.name}</span>
+              <span class="place-dist">{p.dist}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .neighborhood {
+    background: var(--color-surface);
+  }
+
+  .section-intro {
+    max-width: 620px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .neighborhood-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .neighborhood-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+  }
+
+  .col h3 {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  .place-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .place-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: var(--space-sm);
+  }
+
+  .place-list li:last-child {
+    border-bottom: none;
+  }
+
+  .place-name {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--color-text);
+  }
+
+  .place-dist {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+</style>

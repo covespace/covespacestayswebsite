@@ -1,0 +1,128 @@
+---
+---
+
+<section id="availability" class="availability">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Availability</p>
+      <h2>Real-time calendar</h2>
+      <p class="section-intro">
+        Synced from our booking calendar — updates every 30 minutes. Greyed-out
+        dates are already booked.
+      </p>
+    </div>
+
+    <div class="calendar-wrap">
+      <div id="availability-calendar" class="calendar" aria-live="polite">
+        <div class="calendar-loading">Loading availability...</div>
+      </div>
+      <p class="calendar-note">
+        Found dates that work? Head to the
+        <a href="#inquire">inquiry form</a> below to request them.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (async function () {
+    const target = document.getElementById('availability-calendar');
+    if (!target) return;
+
+    async function loadBooked() {
+      try {
+        const res = await fetch('/.netlify/functions/availability');
+        if (!res.ok) throw new Error('fetch failed');
+        const data = await res.json();
+        return data.booked || [];
+      } catch (err) {
+        console.error('availability fetch failed', err);
+        return null;
+      }
+    }
+
+    function initCalendar(booked) {
+      if (typeof flatpickr === 'undefined') {
+        // Flatpickr not loaded yet — try again shortly
+        setTimeout(() => initCalendar(booked), 200);
+        return;
+      }
+
+      target.innerHTML = '';
+      flatpickr(target, {
+        inline: true,
+        minDate: 'today',
+        showMonths: window.innerWidth >= 900 ? 2 : 1,
+        disable: booked || [],
+        clickOpens: false,
+        allowInput: false,
+        onReady: function (_, __, instance) {
+          instance.calendarContainer.classList.add('availability-flatpickr');
+        },
+      });
+    }
+
+    const booked = await loadBooked();
+    if (booked === null) {
+      target.innerHTML =
+        '<div class="calendar-error">We couldn\'t load the live calendar. Please submit an inquiry below and we\'ll confirm availability by email.</div>';
+      return;
+    }
+    initCalendar(booked);
+
+    window.__bookedDates = booked;
+    window.dispatchEvent(new CustomEvent('availability-loaded', { detail: { booked } }));
+  })();
+</script>
+
+<style is:global>
+  .availability {
+    background: var(--color-surface);
+  }
+
+  .calendar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .calendar {
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-loading,
+  .calendar-error {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    text-align: center;
+    padding: var(--space-md);
+    max-width: 480px;
+  }
+
+  .calendar-note {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .availability-flatpickr.flatpickr-calendar {
+    font-family: var(--font-sans);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .availability-flatpickr .flatpickr-day.flatpickr-disabled {
+    background: #f0ebe3;
+    color: #b8afa4;
+    text-decoration: line-through;
+  }
+
+  .availability-flatpickr .flatpickr-day.today {
+    border-color: var(--color-accent);
+  }
+</style>

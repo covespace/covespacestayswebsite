@@ -1,0 +1,102 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="brand">Cove Space Stays</p>
+        <p class="tagline">Thoughtfully hosted stays in Phoenix.</p>
+      </div>
+
+      <div class="footer-contact">
+        <p class="label">Contact</p>
+        <a href="mailto:matt@covespacebuild.com">matt@covespacebuild.com</a>
+      </div>
+
+      <div class="footer-nav">
+        <p class="label">Explore</p>
+        <a href="#space">Your property</a>
+        <a href="#neighborhood">Neighborhood</a>
+        <a href="#availability">Availability</a>
+        <a href="#inquire">Inquire</a>
+      </div>
+    </div>
+
+    <div class="footer-base">
+      <p>&copy; {year} Cove Space Stays. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-text);
+    color: var(--color-surface);
+    padding: var(--space-lg) 0 var(--space-md);
+    margin-top: var(--space-lg);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  @media (max-width: 700px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+  }
+
+  .brand {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    margin-bottom: 0.4rem;
+    color: var(--color-surface);
+  }
+
+  .tagline {
+    color: rgba(250, 248, 245, 0.65);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(250, 248, 245, 0.55);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .footer-contact a,
+  .footer-nav a {
+    display: block;
+    color: var(--color-surface);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.2rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .footer-contact a:hover,
+  .footer-nav a:hover {
+    color: var(--color-accent);
+  }
+
+  .footer-base {
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(250, 248, 245, 0.1);
+  }
+
+  .footer-base p {
+    font-size: 0.85rem;
+    color: rgba(250, 248, 245, 0.5);
+    margin: 0;
+  }
+</style>
