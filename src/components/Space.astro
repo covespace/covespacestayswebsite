@@ -33,9 +33,12 @@ const features = [
         </p>
       </div>
       <div class="space-visual">
-        <div class="space-image" aria-label="Interior photo (placeholder)">
-          <span>Interior photo</span>
-        </div>
+        <img
+          src="/images/InteriorPhoto.avif"
+          alt="Inside Casa Blanca — living area of the Coronado Historic District home"
+          class="space-image"
+          loading="lazy"
+        />
       </div>
     </div>
 
@@ -75,16 +78,11 @@ const features = [
   }
 
   .space-image {
+    width: 100%;
     aspect-ratio: 4 / 5;
-    background: linear-gradient(135deg, #e8d9c4 0%, #d4b896 100%);
+    object-fit: cover;
     border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(0, 0, 0, 0.35);
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    display: block;
   }
 
   .features {

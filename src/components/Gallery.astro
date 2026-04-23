@@ -1,11 +1,11 @@
 ---
-const placeholders = [
-  { label: 'Exterior', aspect: '4/3' },
-  { label: 'Living room', aspect: '4/3' },
-  { label: 'King bedroom', aspect: '1/1' },
-  { label: 'Kitchen', aspect: '1/1' },
-  { label: 'Queen bedroom', aspect: '4/3' },
-  { label: 'Patio', aspect: '4/3' },
+const photos = [
+  { src: '/images/exterior.avif', alt: 'Casa Blanca exterior', aspect: '4/3' },
+  { src: '/images/livingroom.avif', alt: 'Living room', aspect: '4/3' },
+  { src: '/images/kingbedroom.avif', alt: 'King bedroom', aspect: '1/1' },
+  { src: '/images/kitchen.avif', alt: 'Kitchen', aspect: '1/1' },
+  { src: '/images/queenbedroom.avif', alt: 'Queen bedroom', aspect: '4/3' },
+  { src: '/images/patio.avif', alt: 'Back patio', aspect: '4/3' },
 ];
 ---
 
@@ -16,10 +16,14 @@ const placeholders = [
       <h2>A look inside</h2>
     </div>
     <div class="gallery-grid">
-      {placeholders.map((p, i) => (
-        <div class={`photo photo-${i}`} style={`aspect-ratio: ${p.aspect}`}>
-          <span>{p.label}</span>
-        </div>
+      {photos.map((p) => (
+        <img
+          src={p.src}
+          alt={p.alt}
+          class="photo"
+          style={`aspect-ratio: ${p.aspect}`}
+          loading="lazy"
+        />
       ))}
     </div>
   </div>
@@ -49,39 +53,15 @@ const placeholders = [
   }
 
   .photo {
-    background: linear-gradient(135deg, #e8d9c4 0%, #c9a876 100%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(0, 0, 0, 0.4);
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    overflow: hidden;
+    display: block;
+    transition: transform 0.4s ease;
   }
 
-  .photo-0 {
-    background: linear-gradient(135deg, #d4b896 0%, #b08968 100%);
-  }
-
-  .photo-1 {
-    background: linear-gradient(135deg, #e8d9c4 0%, #d4b896 100%);
-  }
-
-  .photo-2 {
-    background: linear-gradient(135deg, #c9a876 0%, #b08968 100%);
-  }
-
-  .photo-3 {
-    background: linear-gradient(135deg, #d4b896 0%, #b08968 100%);
-  }
-
-  .photo-4 {
-    background: linear-gradient(135deg, #b08968 0%, #8b6f4e 100%);
-  }
-
-  .photo-5 {
-    background: linear-gradient(135deg, #e8d9c4 0%, #b08968 100%);
+  .photo:hover {
+    transform: scale(1.02);
   }
 </style>
