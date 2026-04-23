@@ -2,7 +2,12 @@
 ---
 
 <section class="hero">
-  <div class="hero-image" aria-label="Casa Blanca exterior (placeholder)"></div>
+  <img
+    src="/images/hero.jpg"
+    alt=""
+    class="hero-image"
+    fetchpriority="high"
+  />
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-text">
@@ -32,25 +37,10 @@
   .hero-image {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      #d4b896 0%,
-      #c9a876 35%,
-      #b56544 100%
-    );
-  }
-
-  .hero-image::after {
-    content: 'Hero photo placeholder';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .hero-overlay {
@@ -58,9 +48,9 @@
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(0, 0, 0, 0.35) 0%,
-      rgba(0, 0, 0, 0.1) 40%,
-      rgba(0, 0, 0, 0) 70%
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.25) 40%,
+      rgba(0, 0, 0, 0.05) 75%
     );
   }
 
