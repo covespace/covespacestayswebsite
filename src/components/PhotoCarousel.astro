@@ -1,0 +1,220 @@
+---
+const count = 44;
+const photos = Array.from({ length: count }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  return `/images/airbnb/airbnb-${n}.avif`;
+});
+---
+
+<section id="photos" class="carousel-section">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Photo Tour</p>
+      <h2>The full set</h2>
+      <p class="section-intro">
+        Every angle of the house. Swipe, scroll, or use the arrows.
+      </p>
+    </div>
+
+    <div class="carousel" data-carousel>
+      <button
+        class="carousel-btn carousel-btn-prev"
+        data-carousel-prev
+        aria-label="Previous photo"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            d="M15 6l-6 6 6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <div class="carousel-track" data-carousel-track>
+        {photos.map((src, i) => (
+          <figure class="carousel-slide">
+            <img
+              src={src}
+              alt={`Casa Blanca photo ${i + 1} of ${count}`}
+              loading={i < 3 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </figure>
+        ))}
+      </div>
+
+      <button
+        class="carousel-btn carousel-btn-next"
+        data-carousel-next
+        aria-label="Next photo"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            d="M9 6l6 6-6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="carousel-counter">
+      <span data-carousel-current>1</span> / {count}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    const root = document.querySelector('[data-carousel]');
+    if (!root) return;
+    const track = root.querySelector('[data-carousel-track]');
+    const prev = root.querySelector('[data-carousel-prev]');
+    const next = root.querySelector('[data-carousel-next]');
+    const counter = document.querySelector('[data-carousel-current]');
+    if (!track || !prev || !next) return;
+
+    function scrollByOne(dir) {
+      const slide = track.querySelector('.carousel-slide');
+      if (!slide) return;
+      const step = slide.getBoundingClientRect().width + 16;
+      track.scrollBy({ left: dir * step, behavior: 'smooth' });
+    }
+
+    prev.addEventListener('click', () => scrollByOne(-1));
+    next.addEventListener('click', () => scrollByOne(1));
+
+    let raf = null;
+    track.addEventListener('scroll', () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const slide = track.querySelector('.carousel-slide');
+        if (!slide || !counter) return;
+        const step = slide.getBoundingClientRect().width + 16;
+        const idx = Math.round(track.scrollLeft / step) + 1;
+        counter.textContent = String(idx);
+      });
+    });
+
+    // Keyboard nav when carousel is in view
+    document.addEventListener('keydown', (e) => {
+      const rect = root.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+      if (!inView) return;
+      if (e.key === 'ArrowLeft') scrollByOne(-1);
+      if (e.key === 'ArrowRight') scrollByOne(1);
+    });
+  })();
+</script>
+
+<style>
+  .carousel-section {
+    background: var(--color-surface);
+  }
+
+  .carousel {
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-sm);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    height: 6px;
+  }
+  .carousel-track::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .carousel-track::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+  }
+
+  .carousel-slide {
+    flex: 0 0 auto;
+    width: min(78vw, 820px);
+    margin: 0;
+    scroll-snap-align: center;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--color-border);
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .carousel-btn:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .carousel-btn:active {
+    transform: translateY(-50%) scale(0.97);
+  }
+
+  .carousel-btn-prev {
+    left: 8px;
+  }
+
+  .carousel-btn-next {
+    right: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .carousel-btn {
+      width: 38px;
+      height: 38px;
+    }
+  }
+
+  .carousel-counter {
+    text-align: center;
+    margin-top: var(--space-sm);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
