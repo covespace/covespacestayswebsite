@@ -80,6 +80,10 @@
     background: var(--color-surface);
   }
 
+  .availability .section-header {
+    margin-bottom: var(--space-md);
+  }
+
   .calendar-wrap {
     display: flex;
     flex-direction: column;
@@ -88,10 +92,13 @@
   }
 
   .calendar {
-    min-height: 340px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+  }
+
+  .calendar:empty {
+    min-height: 0;
   }
 
   .calendar-loading,
