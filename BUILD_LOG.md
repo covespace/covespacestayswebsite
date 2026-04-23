@@ -146,3 +146,12 @@ CoveSpaceStays_Website/
 
 ### Payment
 - [ ] Decide if direct booking should go to Stripe Checkout for a deposit, or remain inquiry-only. Inquiry-only is fine for v1 — user qualifies guests personally and sends an invoice.
+
+### SMS notifications (deferred until inquiry volume warrants it)
+- [ ] Add Twilio SMS notification for inquiries — fires when the volume is high enough that email is easy to miss
+- Plan: Netlify form outgoing webhook → Netlify Function → Twilio API → text to owner's phone
+- Text body includes name, dates, guests, phone, email, and message so owner can reply directly via tap-to-text
+- Env vars needed: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`, `OWNER_PHONE`
+- Cost: ~$1.15/mo phone number + ~$0.008/SMS sent (roughly $15–30/year at typical inquiry volume)
+- If going this route, also change the inquiry form's phone field from optional to required
+- Alternative if cost-sensitive: carrier email-to-SMS gateways (Verizon `@vtext.com`, AT&T `@txt.att.net`) — free but 160-char limit and inconsistent delivery
