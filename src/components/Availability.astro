@@ -7,8 +7,8 @@
       <p class="eyebrow">Availability</p>
       <h2>Real-time calendar</h2>
       <p class="section-intro">
-        Synced from our booking calendar — updates every 30 minutes. Greyed-out
-        dates are already booked.
+        Live availability and nightly pricing — synced every 30 minutes.
+        Greyed-out dates are already booked.
       </p>
     </div>
 
@@ -41,10 +41,28 @@
       }
     }
 
-    function initCalendar(booked) {
+    async function loadPricing() {
+      try {
+        const res = await fetch('/.netlify/functions/pricing');
+        if (!res.ok) throw new Error('fetch failed');
+        const data = await res.json();
+        return data.prices || {};
+      } catch (err) {
+        console.warn('pricing fetch failed (calendar will render without prices)', err);
+        return {};
+      }
+    }
+
+    function toISODate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function initCalendar(booked, prices) {
       if (typeof flatpickr === 'undefined') {
-        // Flatpickr not loaded yet — try again shortly
-        setTimeout(() => initCalendar(booked), 200);
+        setTimeout(() => initCalendar(booked, prices), 200);
         return;
       }
 
@@ -58,17 +76,35 @@
         allowInput: false,
         onReady: function (_, __, instance) {
           instance.calendarContainer.classList.add('availability-flatpickr');
+          if (prices && Object.keys(prices).length) {
+            instance.calendarContainer.classList.add('with-prices');
+          }
+        },
+        onDayCreate: function (_, __, ___, dayElem) {
+          if (!dayElem.dateObj) return;
+          if (dayElem.classList.contains('flatpickr-disabled')) return;
+          if (dayElem.classList.contains('prevMonthDay')) return;
+          if (dayElem.classList.contains('nextMonthDay')) return;
+
+          const iso = toISODate(dayElem.dateObj);
+          const price = prices[iso];
+          if (!price) return;
+
+          const label = document.createElement('span');
+          label.className = 'price-label';
+          label.textContent = '$' + price;
+          dayElem.appendChild(label);
         },
       });
     }
 
-    const booked = await loadBooked();
+    const [booked, prices] = await Promise.all([loadBooked(), loadPricing()]);
     if (booked === null) {
       target.innerHTML =
         '<div class="calendar-error">We couldn\'t load the live calendar. Please submit an inquiry below and we\'ll confirm availability by email.</div>';
       return;
     }
-    initCalendar(booked);
+    initCalendar(booked, prices);
 
     window.__bookedDates = booked;
     window.dispatchEvent(new CustomEvent('availability-loaded', { detail: { booked } }));
@@ -131,5 +167,44 @@
 
   .availability-flatpickr .flatpickr-day.today {
     border-color: var(--color-accent);
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-day {
+    height: 56px;
+    line-height: 1;
+    max-height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-day .price-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    letter-spacing: 0;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-day.flatpickr-disabled .price-label {
+    display: none;
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-days,
+  .availability-flatpickr.with-prices .dayContainer {
+    width: auto;
+    min-width: 0;
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-day {
+    max-width: 14.2857%;
+    flex-basis: 14.2857%;
   }
 </style>

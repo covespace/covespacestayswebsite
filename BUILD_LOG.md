@@ -15,6 +15,7 @@ setup/onboarding instructions see [README.md](README.md).
 | Custom domain `covespacestays.com` | ✅ Live | DNS via Squarespace A + CNAME records |
 | HTTPS / SSL | ✅ Live | Let's Encrypt, auto-provisioned by Netlify |
 | Airbnb iCal sync | ✅ Working | `AIRBNB_ICAL_URL` env var set in Netlify, function at `/.netlify/functions/availability` |
+| PriceLabs daily pricing sync | ✅ Working | `PRICELABS_API_KEY` + `PRICELABS_LISTING_ID` env vars; function at `/.netlify/functions/pricing`; renders nightly price under each calendar date |
 | Inquiry form | ✅ Live | Netlify Forms — emails matt@covespacebuild.com |
 | Property photos | ✅ Uploaded | 7 interior/exterior AVIFs in `public/images/` |
 | Hero image | ✅ Uploaded | `hero.avif`, 1920×1280, optimized (4.8MB → 395KB), anchored top |
@@ -36,6 +37,9 @@ setup/onboarding instructions see [README.md](README.md).
 - **Functions directory:** `netlify/functions`
 - **Environment variables:**
   - `AIRBNB_ICAL_URL` = `https://www.airbnb.com/calendar/ical/1510247077466470454.ics?t=b237a73bf01544be8cb4a438d7ddd123`
+  - `PRICELABS_API_KEY` = (rotate after initial setup; generate at PriceLabs → Account → Profile → API)
+  - `PRICELABS_LISTING_ID` = `1510247077466470454` (PriceLabs uses the Airbnb PMS ID directly)
+  - `PRICELABS_PMS` = `airbnb` (optional; defaults to `airbnb` in the function)
   - Scopes: all
   - Deploy contexts: all (Production, Deploy Previews, Branch deploys, Preview Server, Local dev)
 
