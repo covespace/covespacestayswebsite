@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Forms (build-time only — do not link to this page)</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <!--
+      This file exists ONLY so Netlify's static build-time form detection picks
+      up the inquiry form. Netlify scans `dist/*.html` for `data-netlify` forms
+      and registers them. Astro components don't always survive that scan, so
+      we provide a vanilla copy here. The real form rendering and submission
+      lives in src/components/InquiryForm.astro.
+    -->
+    <form
+      name="inquiry"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+    >
+      <input type="hidden" name="form-name" value="inquiry" />
+      <input name="bot-field" />
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <input name="guests" />
+      <input type="text" name="checkin" />
+      <input type="text" name="checkout" />
+      <textarea name="message"></textarea>
+    </form>
+  </body>
+</html>
