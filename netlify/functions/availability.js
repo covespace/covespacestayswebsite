@@ -21,6 +21,8 @@ exports.handler = async () => {
   try {
     const data = await ical.async.fromURL(ICAL_URL);
     const booked = new Set();
+    const checkinDays = new Set();
+    const checkoutDays = new Set();
 
     for (const k of Object.keys(data)) {
       const ev = data[k];
@@ -35,6 +37,14 @@ exports.handler = async () => {
       const end = toUTCDate(ev.end);
       if (!start || !end) continue;
 
+      // Track the existing booking's check-in (DTSTART) and check-out
+      // (DTEND) days separately so the frontend can support same-day
+      // turnover. A new booking can END on an existing check-in day
+      // (their previous night was free) and START on an existing
+      // check-out day (no overlap).
+      checkinDays.add(toISODate(start));
+      checkoutDays.add(toISODate(end));
+
       const cur = new Date(start);
       while (cur < end) {
         booked.add(toISODate(cur));
@@ -43,12 +53,16 @@ exports.handler = async () => {
     }
 
     const sorted = Array.from(booked).sort();
+    const checkinSorted = Array.from(checkinDays).sort();
+    const checkoutSorted = Array.from(checkoutDays).sort();
 
     return {
       statusCode: 200,
       headers: jsonHeaders(1800), // 30 minutes
       body: JSON.stringify({
         booked: sorted,
+        checkinDays: checkinSorted,
+        checkoutDays: checkoutSorted,
         updated: new Date().toISOString(),
         count: sorted.length,
       }),

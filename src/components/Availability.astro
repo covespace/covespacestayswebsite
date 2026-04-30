@@ -65,12 +65,15 @@
     const target = document.getElementById('availability-calendar');
     if (!target) return;
 
-    async function loadBooked() {
+    async function loadAvailability() {
       try {
         const res = await fetch('/.netlify/functions/availability');
         if (!res.ok) throw new Error('fetch failed');
         const data = await res.json();
-        return data.booked || [];
+        return {
+          booked: data.booked || [],
+          checkinDays: data.checkinDays || [],
+        };
       } catch (err) {
         console.error('availability fetch failed', err);
         return null;
@@ -200,11 +203,27 @@
       };
     }
 
-    function initCalendar(booked, prices) {
+    function initCalendar(booked, checkinDays, prices) {
       if (typeof flatpickr === 'undefined') {
-        setTimeout(() => initCalendar(booked, prices), 200);
+        setTimeout(() => initCalendar(booked, checkinDays, prices), 200);
         return;
       }
+
+      // Same-day turnover support:
+      // - "fullyBlocked" = middle nights of every existing reservation. These
+      //   are nights someone else is sleeping, so the calendar must hard-block
+      //   them: they can't be a new booking's check-in, check-out, or middle
+      //   night.
+      // - "checkinDays" = the date each existing reservation begins. Someone
+      //   sleeps that night, so a new booking can't start or span there, but
+      //   a new booking CAN check OUT on that day (the cleaner has the gap
+      //   between 11am check-out and 4pm check-in to flip the unit).
+      // We only mark fullyBlocked as flatpickr-disabled. checkinDays render
+      // as a "checkout-only" tile and are validated in onChange — if the user
+      // ends up using one as their START, we reject the range there.
+      const checkinSet = new Set(checkinDays || []);
+      const fullyBlocked = (booked || []).filter((d) => !checkinSet.has(d));
+      const fullyBlockedSet = new Set(fullyBlocked);
 
       target.innerHTML = '';
       flatpickr(target, {
@@ -212,7 +231,7 @@
         mode: 'range',
         minDate: 'today',
         showMonths: window.innerWidth >= 900 ? 2 : 1,
-        disable: booked || [],
+        disable: fullyBlocked,
         allowInput: false,
         onReady: function (_, __, instance) {
           instance.calendarContainer.classList.add('availability-flatpickr');
@@ -220,9 +239,57 @@
             instance.calendarContainer.classList.add('with-prices');
           }
         },
-        onChange: function (selectedDates) {
+        onChange: function (selectedDates, _, instance) {
           if (selectedDates.length === 2) {
             const [start, end] = selectedDates;
+            const startIso = toISODate(start);
+            const endIso = toISODate(end);
+
+            // Reject 0-night ranges (clicked the same date twice).
+            if (startIso === endIso) {
+              hideSummary();
+              return;
+            }
+
+            // Reject ranges that try to START on a turnover day —
+            // someone is already sleeping there.
+            if (checkinSet.has(startIso)) {
+              instance.clear();
+              hideSummary();
+              alert(
+                'That check-in date isn\'t available — another guest checks in that day. ' +
+                'Try the day after their checkout instead.',
+              );
+              return;
+            }
+
+            // Defensive: re-verify no occupied night sneaks into the range.
+            // flatpickr already enforces this via `disable`, but turnover
+            // days are intentionally not in `disable`, so we double-check.
+            const cur = new Date(start);
+            while (cur < end) {
+              const iso = toISODate(cur);
+              if (fullyBlockedSet.has(iso) || checkinSet.has(iso)) {
+                // Allow checkinSet on the very last iteration (the
+                // checkout day) — it's the turnover case we want to
+                // permit. Otherwise it's a true conflict.
+                const next = new Date(cur);
+                next.setDate(next.getDate() + 1);
+                const isCheckoutTurnover =
+                  next.getTime() === end.getTime() && checkinSet.has(iso) && !fullyBlockedSet.has(iso);
+                if (!isCheckoutTurnover) {
+                  instance.clear();
+                  hideSummary();
+                  alert(
+                    'Those dates aren\'t fully available — there\'s a booking conflict. ' +
+                    'Please pick a different range.',
+                  );
+                  return;
+                }
+              }
+              cur.setDate(cur.getDate() + 1);
+            }
+
             showSummary(start, end, prices);
             if (summaryCta) summaryCta.onclick = ctaHandler(start, end);
             if (summaryBook) summaryBook.onclick = bookHandler(start, end);
@@ -232,11 +299,21 @@
         },
         onDayCreate: function (_, __, ___, dayElem) {
           if (!dayElem.dateObj) return;
-          if (dayElem.classList.contains('flatpickr-disabled')) return;
           if (dayElem.classList.contains('prevMonthDay')) return;
           if (dayElem.classList.contains('nextMonthDay')) return;
 
           const iso = toISODate(dayElem.dateObj);
+
+          // Mark turnover days for styling — they're not flatpickr-disabled
+          // (so they can be picked as a new booking's checkout) but they
+          // also can't start a new stay.
+          if (checkinSet.has(iso) && !fullyBlockedSet.has(iso)) {
+            dayElem.classList.add('turnover-day');
+            dayElem.title = 'Checkout-only — another guest checks in this day';
+          }
+
+          if (dayElem.classList.contains('flatpickr-disabled')) return;
+
           const price = prices[iso];
           if (!price) return;
 
@@ -248,13 +325,14 @@
       });
     }
 
-    const [booked, prices] = await Promise.all([loadBooked(), loadPricing()]);
-    if (booked === null) {
+    const [availability, prices] = await Promise.all([loadAvailability(), loadPricing()]);
+    if (availability === null) {
       target.innerHTML =
         '<div class="calendar-error">We couldn\'t load the live calendar. Please submit an inquiry below and we\'ll confirm availability by email.</div>';
       return;
     }
-    initCalendar(booked, prices);
+    const { booked, checkinDays } = availability;
+    initCalendar(booked, checkinDays, prices);
 
     window.__bookedDates = booked;
     window.dispatchEvent(new CustomEvent('availability-loaded', { detail: { booked } }));
@@ -377,6 +455,27 @@
 
   .availability-flatpickr.with-prices .flatpickr-day.flatpickr-disabled .price-label {
     display: none;
+  }
+
+  /*
+   * Turnover days: another guest is checking in this day, so a new booking
+   * can only END here (checkout). Visually we tint the lower-left half to
+   * communicate "first half of the day is taken." The tile stays clickable.
+   */
+  .availability-flatpickr .flatpickr-day.turnover-day {
+    background: linear-gradient(
+      to top right,
+      #f0ebe3 0%,
+      #f0ebe3 49%,
+      transparent 51%,
+      transparent 100%
+    );
+  }
+
+  .availability-flatpickr .flatpickr-day.turnover-day.endRange,
+  .availability-flatpickr .flatpickr-day.turnover-day.selected {
+    background: var(--color-accent);
+    color: white;
   }
 
   .availability-flatpickr .flatpickr-day.selected,
