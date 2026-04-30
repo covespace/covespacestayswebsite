@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Booking confirmed — Casa Blanca"
+  description="Your Casa Blanca booking is confirmed."
+>
+  <Nav />
+  <main>
+    <section class="confirmed">
+      <div class="container-narrow">
+        <p class="eyebrow">Confirmed</p>
+        <h1>Thanks — your stay is booked.</h1>
+        <p class="lede">
+          We've received your payment and you'll get a Stripe receipt by
+          email shortly. We'll follow up within a few hours with
+          check-in details and the smart-lock code.
+        </p>
+
+        <div class="next-steps">
+          <h2>What happens next</h2>
+          <ol>
+            <li>
+              Stripe will email you a receipt with your booking details.
+            </li>
+            <li>
+              We'll email you check-in instructions, parking notes, and
+              the smart-lock code 24 hours before your arrival.
+            </li>
+            <li>
+              Have questions before then? Reply to the receipt email or
+              text us — contact info is in your confirmation.
+            </li>
+          </ol>
+        </div>
+
+        <div class="policy">
+          <h3>Cancellation policy</h3>
+          <ul>
+            <li>
+              <strong>More than 30 days before check-in:</strong>
+              full refund.
+            </li>
+            <li>
+              <strong>7–29 days before check-in:</strong>
+              50% refund.
+            </li>
+            <li>
+              <strong>Less than 7 days before check-in:</strong>
+              non-refundable.
+            </li>
+          </ul>
+          <p class="policy-note">
+            To request a cancellation, reply to your booking receipt email
+            and we'll process it within 24 hours.
+          </p>
+        </div>
+
+        <a href="/" class="button button-secondary">Back to Casa Blanca</a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .confirmed {
+    padding-top: calc(var(--space-xl) + 60px);
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+  }
+
+  .next-steps,
+  .policy {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .next-steps h2 {
+    font-size: 1.4rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .next-steps ol,
+  .policy ul {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .next-steps li,
+  .policy li {
+    margin-bottom: 0.6rem;
+    line-height: 1.55;
+  }
+
+  .policy h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .policy-note {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-sm);
+  }
+
+  .button {
+    margin-top: var(--space-md);
+  }
+</style>

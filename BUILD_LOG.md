@@ -16,6 +16,8 @@ setup/onboarding instructions see [README.md](README.md).
 | HTTPS / SSL | ✅ Live | Let's Encrypt, auto-provisioned by Netlify |
 | Airbnb iCal sync | ✅ Working | `AIRBNB_ICAL_URL` env var set in Netlify, function at `/.netlify/functions/availability` |
 | PriceLabs daily pricing sync | ✅ Working | `PRICELABS_API_KEY` + `PRICELABS_LISTING_ID` env vars; function at `/.netlify/functions/pricing`; renders nightly price under each calendar date |
+| Date-range selection + total | ✅ Working | Range mode, summary card with subtotal, jumps-to-inquiry CTA |
+| Stripe Checkout integration | ⏳ Built, needs env vars + webhook config | Functions: `create-checkout`, `stripe-webhook`. Page: `/booking-confirmed`. Pass-through 2.9% card fee. Strict cancellation policy displayed at checkout. |
 | Inquiry form | ✅ Live | Netlify Forms — emails matt@covespacebuild.com |
 | Property photos | ✅ Uploaded | 7 interior/exterior AVIFs in `public/images/` |
 | Hero image | ✅ Uploaded | `hero.avif`, 1920×1280, optimized (4.8MB → 395KB), anchored top |
@@ -40,6 +42,11 @@ setup/onboarding instructions see [README.md](README.md).
   - `PRICELABS_API_KEY` = (rotate after initial setup; generate at PriceLabs → Account → Profile → API)
   - `PRICELABS_LISTING_ID` = `1510247077466470454` (PriceLabs uses the Airbnb PMS ID directly)
   - `PRICELABS_PMS` = `airbnb` (optional; defaults to `airbnb` in the function)
+  - `STRIPE_SECRET_KEY` = `sk_live_...` from Stripe → Developers → API keys
+  - `STRIPE_WEBHOOK_SECRET` = `whsec_...` from Stripe → Developers → Webhooks → click endpoint → "Signing secret"
+  - `STRIPE_FEE_PCT` = `2.9` (passed through to guest as a "Card processing fee" line item)
+  - `PUSHOVER_USER_KEY` = (Pushover home dashboard → "Your User Key")
+  - `PUSHOVER_API_TOKEN` = (Pushover application detail page → "API Token/Key")
   - Scopes: all
   - Deploy contexts: all (Production, Deploy Previews, Branch deploys, Preview Server, Local dev)
 
@@ -148,8 +155,24 @@ CoveSpaceStays_Website/
 - [ ] Refactor `availability.js` to accept a listing query param (or split to per-property functions)
 - [ ] Extract Hero/Space/Gallery into property-configurable components
 
-### Payment
-- [ ] Decide if direct booking should go to Stripe Checkout for a deposit, or remain inquiry-only. Inquiry-only is fine for v1 — user qualifies guests personally and sends an invoice.
+### Payment / Stripe activation checklist (done in code, pending operational setup)
+- [ ] Add `STRIPE_SECRET_KEY` env var in Netlify (from Stripe → Developers → API keys → reveal Live secret key)
+- [ ] In Stripe Dashboard → Developers → Webhooks → **Add endpoint**:
+  - URL: `https://covespacestays.com/.netlify/functions/stripe-webhook`
+  - Events: `checkout.session.completed`
+  - Save → reveal **Signing secret** (`whsec_...`) → add to Netlify env var `STRIPE_WEBHOOK_SECRET`
+- [ ] (Optional) Add `STRIPE_FEE_PCT` env var = `2.9` if you want different surcharge than default
+- [ ] Trigger a Netlify redeploy after env vars are saved
+- [ ] Test end-to-end with a real card on Stripe test mode first (toggle keys to test mode for dev), then flip to live keys
+- [ ] **Calendar sync workflow**: Stripe webhook fires Pushover notification — when a booking comes in, manually block those dates on Airbnb host app (~30 sec). Document this internal process so it doesn't get forgotten.
+- [ ] Decide whether to lift surcharge if it kills conversions — common to absorb it into the nightly rate instead
+
+### TPT / tax handling
+- User decided to NOT collect AZ TPT on direct Stripe bookings (Airbnb collects + remits for Airbnb bookings).
+- Note: AZ Department of Revenue still expects TPT on transient lodging revenue regardless of payment platform. Direct-booking revenue is technically taxable. Check with an Arizona accountant whether to:
+  (a) absorb the tax out of the nightly rate (host pays it on Schedule C / TPT return)
+  (b) gross up the rate to cover it
+  (c) collect & remit explicitly (current code is set up for this — set `TAX_RATE_PCT` env var to re-enable a tax line item)
 
 ### SMS notifications (deferred until inquiry volume warrants it)
 - [ ] Add Twilio SMS notification for inquiries — fires when the volume is high enough that email is easy to miss
