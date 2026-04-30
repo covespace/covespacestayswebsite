@@ -122,6 +122,32 @@
       }, 3000);
     }
 
+    function formDataToObject(formData) {
+      const obj = {};
+      for (const [k, v] of formData.entries()) {
+        obj[k] = v;
+      }
+      return obj;
+    }
+
+    async function notifyPushover(formData) {
+      // Fire-and-forget — don't block the success message on this. Failures
+      // here are logged but invisible to the guest; the email notification
+      // and Netlify Forms record are the system of record.
+      try {
+        await fetch('/.netlify/functions/notify-pushover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            form_name: 'inquiry',
+            data: formDataToObject(formData),
+          }),
+        });
+      } catch (err) {
+        console.warn('Pushover notify failed', err);
+      }
+    }
+
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       status.textContent = 'Sending...';
@@ -137,6 +163,9 @@
           body: encoded,
         });
         if (!res.ok) throw new Error('Submission failed');
+
+        // Fire the Pushover notification in parallel — don't await it
+        notifyPushover(formData);
 
         status.textContent =
           "Thanks — your inquiry is in. We'll be in touch by email shortly.";
