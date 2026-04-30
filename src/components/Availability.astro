@@ -319,15 +319,21 @@
     border-color: var(--color-accent);
   }
 
-  .availability-flatpickr.with-prices .dayContainer {
+  .availability-flatpickr.with-prices .dayContainer,
+  .availability-flatpickr.with-prices .flatpickr-weekdaycontainer,
+  .availability-flatpickr.with-prices .flatpickr-weekdays {
     width: 364px;
     min-width: 364px;
     max-width: 364px;
   }
 
-  .availability-flatpickr.with-prices .flatpickr-day {
+  .availability-flatpickr.with-prices .flatpickr-day,
+  .availability-flatpickr.with-prices .flatpickr-weekday {
     flex-basis: 14.2857%;
     max-width: 52px;
+  }
+
+  .availability-flatpickr.with-prices .flatpickr-day {
     height: 52px;
     max-height: 52px;
     line-height: 1;
@@ -337,6 +343,27 @@
     justify-content: center;
     gap: 2px;
     font-weight: 500;
+  }
+
+  @media (max-width: 480px) {
+    .availability-flatpickr.with-prices .dayContainer,
+    .availability-flatpickr.with-prices .flatpickr-weekdaycontainer,
+    .availability-flatpickr.with-prices .flatpickr-weekdays {
+      width: 322px;
+      min-width: 322px;
+      max-width: 322px;
+    }
+    .availability-flatpickr.with-prices .flatpickr-day,
+    .availability-flatpickr.with-prices .flatpickr-weekday {
+      max-width: 46px;
+    }
+    .availability-flatpickr.with-prices .flatpickr-day {
+      height: 48px;
+      max-height: 48px;
+    }
+    .availability-flatpickr.with-prices .flatpickr-day .price-label {
+      font-size: 0.68rem;
+    }
   }
 
   .availability-flatpickr.with-prices .flatpickr-day .price-label {
