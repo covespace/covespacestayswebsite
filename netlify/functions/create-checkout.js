@@ -10,7 +10,7 @@
 
 const STRIPE_API = 'https://api.stripe.com/v1/checkout/sessions';
 const PRICELABS_API = 'https://api.pricelabs.co/v1/listing_prices';
-const SITE_URL = process.env.URL || 'https://covespacestays.com';
+const SITE_URL = process.env.URL || 'https://www.covespacestays.com';
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {

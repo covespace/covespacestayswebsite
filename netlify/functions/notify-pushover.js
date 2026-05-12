@@ -5,7 +5,7 @@
 // {
 //   "form_name": "inquiry",
 //   "data": {"name": "...", "email": "...", ...},
-//   "site_url": "https://covespacestays.com",
+//   "site_url": "https://www.covespacestays.com",
 //   ...
 // }
 

@@ -76,7 +76,7 @@ MX records were left untouched.
 
 ```
 CoveSpaceStays_Website/
-├── astro.config.mjs            # static output, site: https://covespacestays.com
+├── astro.config.mjs            # static output, site: https://www.covespacestays.com
 ├── netlify.toml                # build config, security headers, function cache
 ├── package.json                # astro, flatpickr, node-ical
 ├── public/
@@ -158,7 +158,7 @@ CoveSpaceStays_Website/
 ### Payment / Stripe activation checklist (done in code, pending operational setup)
 - [ ] Add `STRIPE_SECRET_KEY` env var in Netlify (from Stripe → Developers → API keys → reveal Live secret key)
 - [ ] In Stripe Dashboard → Developers → Webhooks → **Add endpoint**:
-  - URL: `https://covespacestays.com/.netlify/functions/stripe-webhook`
+  - URL: `https://www.covespacestays.com/.netlify/functions/stripe-webhook`
   - Events: `checkout.session.completed`
   - Save → reveal **Signing secret** (`whsec_...`) → add to Netlify env var `STRIPE_WEBHOOK_SECRET`
 - [ ] (Optional) Add `STRIPE_FEE_PCT` env var = `2.9` if you want different surcharge than default
