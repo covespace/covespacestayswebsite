@@ -1,0 +1,140 @@
+---
+const faqs = [
+  {
+    q: 'Is Casa Blanca pet-friendly?',
+    a: 'Yes, dogs are welcome at Casa Blanca. The home has a fenced backyard for your pup to enjoy, and there\'s no additional pet fee.',
+  },
+  {
+    q: 'How far is Casa Blanca from Sky Harbor Airport?',
+    a: 'About 4 miles — a 10 to 12-minute drive depending on traffic. Convenient for early flights or late arrivals.',
+  },
+  {
+    q: 'Where do I park at Casa Blanca?',
+    a: 'Free street parking is available directly in front of the house. No permit needed, and the street is quiet residential.',
+  },
+  {
+    q: 'What\'s walkable from Casa Blanca?',
+    a: 'Dark Hall Coffee is a 3-minute walk, Coronado Phx (a scratch-kitchen restaurant) is also 3 minutes, and Sunshine Market is 3 minutes for groceries. Coronado Park and the Oak Street murals are about 8 minutes on foot.',
+  },
+  {
+    q: 'How many guests can stay at Casa Blanca?',
+    a: 'Up to 4 guests across 2 bedrooms. The primary bedroom has a king bed and the second bedroom has a queen with a walk-in closet. The home is single-level with no stairs.',
+  },
+  {
+    q: 'Is check-in self-service?',
+    a: 'Yes — Casa Blanca uses a smart lock with a unique code, so you can check in any time after 4pm. Check-out is 11am. The code is sent the day before your arrival.',
+  },
+  {
+    q: 'Is there a pool?',
+    a: 'No pool at the property, but the back patio is shaded and has a propane BBQ. The Coronado neighborhood has several public pools within a short drive.',
+  },
+];
+---
+
+<section id="faq" class="faq">
+  <div class="container-narrow">
+    <div class="section-header">
+      <p class="eyebrow">Frequently Asked</p>
+      <h2>Quick answers</h2>
+    </div>
+
+    <div class="faq-list">
+      {faqs.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <div class="faq-answer">
+            <p>{item.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  })}
+/>
+
+<style>
+  .faq {
+    background: var(--color-surface);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .faq-item {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: var(--color-accent);
+  }
+
+  .faq-item summary {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: background 0.15s ease;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-family: var(--font-sans);
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--color-text-muted);
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] summary::after {
+    content: '−';
+    color: var(--color-accent);
+  }
+
+  .faq-item summary:hover {
+    background: var(--color-surface);
+  }
+
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+  }
+
+  .faq-answer p {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

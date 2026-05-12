@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /__forms.html
+Disallow: /booking-confirmed
+Disallow: /.netlify/
+
+Sitemap: https://covespacestays.com/sitemap.xml

@@ -9,13 +9,95 @@ import Neighborhood from '../components/Neighborhood.astro';
 import Availability from '../components/Availability.astro';
 import WhyBookDirect from '../components/WhyBookDirect.astro';
 import InquiryForm from '../components/InquiryForm.astro';
+import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
+
+const siteUrl = 'https://covespacestays.com';
+
+const vacationRentalSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'VacationRental',
+  name: 'Casa Blanca',
+  description:
+    'Historic 2-bedroom casita in Phoenix\'s Coronado Historic District. Walkable to coffee, dinner, and a neighborhood market. Pet-friendly with a fenced backyard. Self check-in via smart lock.',
+  url: siteUrl,
+  image: [
+    `${siteUrl}/images/hero.avif`,
+    `${siteUrl}/images/InteriorPhoto.avif`,
+    `${siteUrl}/images/exterior.avif`,
+    `${siteUrl}/images/livingroom.avif`,
+    `${siteUrl}/images/kingbedroom.avif`,
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Phoenix',
+    addressRegion: 'AZ',
+    postalCode: '85008',
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 33.47449348,
+    longitude: -112.05663756,
+  },
+  containedInPlace: {
+    '@type': 'Place',
+    name: 'Coronado Historic District, Phoenix',
+  },
+  numberOfBedrooms: 2,
+  numberOfBathroomsTotal: 1,
+  occupancy: {
+    '@type': 'QuantitativeValue',
+    maxValue: 4,
+  },
+  petsAllowed: true,
+  smokingAllowed: false,
+  amenityFeature: [
+    { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Full kitchen', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Washer/Dryer', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Air conditioning', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Smart lock self check-in', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Fenced backyard', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Propane BBQ', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Pet-friendly', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Free street parking', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Single level (no stairs)', value: true },
+  ],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.95',
+    reviewCount: '49',
+    bestRating: '5',
+    worstRating: '1',
+  },
+};
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Cove Space Stays',
+  url: siteUrl,
+  email: 'matt@covespacebuild.com',
+  logo: `${siteUrl}/favicon.svg`,
+};
 ---
 
 <Layout
-  title="Casa Blanca — Cove Space Stays | Historic Phoenix Rental"
-  description="Casa Blanca is a 2-bedroom historic home in Phoenix's Coronado Historic District. Walkable to coffee, dinner, and a neighborhood market. Book direct and skip the fees."
+  title="Casa Blanca · Historic Phoenix Casita · 2BR Pet-Friendly Rental"
+  description="2BR historic casita in Phoenix's Coronado Historic District. Walk to coffee, dinner, and a neighborhood market. Pet-friendly, fenced yard, self check-in. Book direct — skip the fees."
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(vacationRentalSchema)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(orgSchema)}
+  />
+
   <Nav />
   <main>
     <Hero />
@@ -25,6 +107,7 @@ import Footer from '../components/Footer.astro';
     <Availability />
     <WhyBookDirect />
     <InquiryForm />
+    <FAQ />
     <PhotoCarousel />
   </main>
   <Footer />
