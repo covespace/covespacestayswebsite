@@ -251,6 +251,17 @@
               return;
             }
 
+            // Enforce 2-night minimum stay.
+            const nights = Math.round((end - start) / 86400000);
+            if (nights < 2) {
+              instance.clear();
+              hideSummary();
+              alert(
+                'Minimum stay is 2 nights — please pick a check-out date at least 2 days after your check-in.',
+              );
+              return;
+            }
+
             // Reject ranges that try to START on a turnover day —
             // someone is already sleeping there.
             if (checkinSet.has(startIso)) {
